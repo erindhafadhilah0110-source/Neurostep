@@ -3,6 +3,16 @@
 // Auth & data sepenuhnya menggunakan Supabase
 // ============================================================
 
+// Peringatan jika dibuka via file://
+if (location.protocol === "file:") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const warn = document.createElement("div");
+    warn.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:9999;background:#d6495f;color:#fff;padding:14px 20px;font-weight:700;text-align:center;font-family:sans-serif;font-size:14px";
+    warn.textContent = "⚠️ Aplikasi harus dibuka via http:// bukan file://. Gunakan Live Server, GitHub Pages, atau Netlify.";
+    document.body.prepend(warn);
+  });
+}
+
 // --- Inisialisasi Supabase client ---
 const supabase = window.supabase.createClient(
   CONFIG.supabase.url,
@@ -119,11 +129,12 @@ document.getElementById("registerForm").addEventListener("submit", async (event)
 
   setLoading(btn, true);
 
-  const { error } = await supabase.auth.signUp({
+  const { data: signUpData, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { full_name: name }   // disimpan ke raw_user_meta_data → trigger buat profil
+      data: { full_name: name },
+      emailRedirectTo: location.origin + location.pathname
     }
   });
 
@@ -134,6 +145,15 @@ document.getElementById("registerForm").addEventListener("submit", async (event)
     return;
   }
 
+  // Jika email confirmation dimatikan di Supabase, user langsung punya session
+  if (signUpData.session) {
+    event.target.reset();
+    clearMessage(authMessage);
+    renderApp();
+    return;
+  }
+
+  // Jika email confirmation aktif
   event.target.reset();
   switchAuthTab("login");
   showMessage(
@@ -337,23 +357,29 @@ document.getElementById("assessmentForm").addEventListener("submit", async (even
   const result = calculateRisk(payload);
 
   const { error } = await supabase.from(CONFIG.tables.assessments).insert({
-    user_id:          session.user.id,
-    assessment_date:  document.getElementById("assessmentDate").value,
-    diabetes_status:  document.getElementById("diabetesStatus").value,
-    pain_level:       payload.painLevel,
-    foot_temp:        payload.footTemp,
-    skin_condition:   payload.skinCondition,
+    user_id:           session.user.id,
+    assessment_date:   document.getElementById("assessmentDate").value,
+    diabetes_status:   document.getElementById("diabetesStatus").value,
+    pain_level:        payload.painLevel,
+    foot_temp:         payload.footTemp,
+    skin_condition:    payload.skinCondition,
     nerve_sensitivity: payload.nerveSensitivity,
-    symptoms:         payload.symptoms,
-    risk_level:       result.level,
-    risk_title:       result.title,
-    risk_score:       result.score
+    symptoms:          payload.symptoms,
+    risk_level:        result.level,
+    risk_title:        result.title,
+    risk_score:        result.score
   });
 
   setLoading(btn, false);
 
   if (error) {
-    console.error(error);
+    console.error("[NEUROSTEP] Gagal simpan assessment:", error.message, error.details, error.hint);
+    showMessage(
+      document.getElementById("assessmentResult"),
+      `Gagal menyimpan: ${error.message}`,
+      "error"
+    );
+    assessmentResult.classList.remove("hidden");
     return;
   }
 
@@ -414,7 +440,8 @@ document.getElementById("dailyChecklistForm").addEventListener("submit", async (
   setLoading(btn, false);
 
   if (error) {
-    showMessage(msgEl, "Gagal menyimpan. Coba lagi.", "error");
+    console.error("[NEUROSTEP] Gagal simpan daily check:", error.message, error.details, error.hint);
+    showMessage(msgEl, `Gagal menyimpan: ${error.message}`, "error");
     return;
   }
 
@@ -444,7 +471,8 @@ document.getElementById("notesForm").addEventListener("submit", async (event) =>
   setLoading(btn, false);
 
   if (error) {
-    showMessage(msgEl, "Gagal menyimpan catatan. Coba lagi.", "error");
+    console.error("[NEUROSTEP] Gagal simpan catatan luka:", error.message, error.details, error.hint);
+    showMessage(msgEl, `Gagal menyimpan: ${error.message}`, "error");
     return;
   }
 

@@ -361,8 +361,8 @@
   <script src="config.js"></script>
   <script src="script.js"></script>
   <script>
-    // Daftarkan Service Worker
-    if ("serviceWorker" in navigator) {
+    // Daftarkan Service Worker hanya jika bukan file://
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("/sw.js")

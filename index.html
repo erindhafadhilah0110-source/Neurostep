@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEUROSTEP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1677d8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="NEUROSTEP">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+<body>
+  <div class="app-shell">
+    <section class="auth-screen" id="authScreen">
+      <div class="auth-hero">
+        <div class="brand-mark">NS</div>
+        <p class="eyebrow">NEUROSTEP</p>
+        <h1>Perawatan kaki diabetes cerdas</h1>
+        <p class="hero-copy">Aplikasi pendamping untuk memantau kondisi kaki, membuat catatan harian, dan mendapatkan arahan perawatan yang lebih cepat.</p>
+      </div>
+
+      <div class="auth-card">
+        <div class="brand-inline">
+          <div class="brand-mark small">NS</div>
+          <div>
+            <h2>NEUROSTEP</h2>
+            <p>Perawatan kaki diabetes cerdas</p>
+          </div>
+        </div>
+
+        <div class="tab-switcher">
+          <button class="tab-btn active" data-auth-tab="login">Login</button>
+          <button class="tab-btn" data-auth-tab="register">Registrasi</button>
+        </div>
+
+        <form id="loginForm" class="auth-form active">
+          <h3>Masuk ke akun Anda</h3>
+          <label>
+            <span>Email</span>
+            <input type="email" id="loginEmail" placeholder="nama@email.com" required>
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" id="loginPassword" placeholder="Masukkan password" required>
+          </label>
+          <button type="submit" class="primary-btn">Masuk</button>
+          <p class="switch-copy">Belum punya akun? <button type="button" class="text-btn" data-go-register>Daftar Akun Baru</button></p>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+          <h3>Buat akun baru</h3>
+          <label>
+            <span>Nama lengkap</span>
+            <input type="text" id="registerName" placeholder="Nama lengkap" required>
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" id="registerEmail" placeholder="nama@email.com" required>
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" id="registerPassword" placeholder="Buat password" required>
+          </label>
+          <label>
+            <span>Konfirmasi password</span>
+            <input type="password" id="registerConfirm" placeholder="Ulangi password" required>
+          </label>
+          <button type="submit" class="primary-btn">Buat Akun</button>
+          <p class="switch-copy">Sudah punya akun? <button type="button" class="text-btn" data-go-login>Kembali ke Login</button></p>
+        </form>
+
+        <div id="authMessage" class="message-box" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="dashboard-screen hidden" id="dashboardScreen">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h1 id="welcomeText">Selamat datang kembali</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="openProfileBtn" aria-label="Profil">☰</button>
+          <button class="secondary-btn" id="logoutBtn">Keluar</button>
+        </div>
+      </header>
+
+      <main class="dashboard-content">
+        <section class="status-panel">
+          <div>
+            <p class="panel-label">Status harian</p>
+            <h2 id="dailyStatusTitle">Normal</h2>
+            <p id="dailyStatusCopy">Kaki Anda dalam kondisi baik.</p>
+          </div>
+          <div class="status-badge" id="dashboardStatusBadge">Aman</div>
+        </section>
+
+        <section class="menu-grid">
+          <button class="menu-card" data-modal-target="assessmentModal">
+            <span>Checklist</span>
+            <strong>Pemeriksaan kaki harian</strong>
+          </button>
+          <button class="menu-card" data-modal-target="guideModal">
+            <span>Panduan</span>
+            <strong>Langkah perawatan kaki</strong>
+          </button>
+          <button class="menu-card" data-modal-target="reminderModal">
+            <span>Pengingat</span>
+            <strong>Jadwal perawatan dan obat</strong>
+          </button>
+          <button class="menu-card" data-modal-target="educationModal">
+            <span>Edukasi</span>
+            <strong>Informasi diabetes</strong>
+          </button>
+          <button class="menu-card" data-modal-target="notesModal">
+            <span>Catatan</span>
+            <strong>Catat kondisi luka kaki</strong>
+          </button>
+          <button class="menu-card" data-modal-target="historyModal">
+            <span>Riwayat</span>
+            <strong>Lihat data sebelumnya</strong>
+          </button>
+        </section>
+
+        <section class="summary-grid">
+          <article class="mini-card">
+            <p>Total pemeriksaan</p>
+            <strong id="totalAssessments">0</strong>
+          </article>
+          <article class="mini-card">
+            <p>Checklist harian</p>
+            <strong id="totalDailyChecks">0</strong>
+          </article>
+          <article class="mini-card">
+            <p>Catatan luka</p>
+            <strong id="totalNotes">0</strong>
+          </article>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <div class="modal hidden" id="assessmentModal">
+    <div class="modal-card">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 3</p>
+        <h2>Penilaian Kondisi Kaki</h2>
+      </div>
+
+      <form id="assessmentForm" class="modal-form">
+        <div class="form-grid">
+          <label>
+            <span>Tanggal Pemeriksaan</span>
+            <input type="date" id="assessmentDate" required>
+          </label>
+          <label>
+            <span>Status Diabetes Melitus</span>
+            <select id="diabetesStatus" required>
+              <option value="Tipe 1">Tipe 1</option>
+              <option value="Tipe 2">Tipe 2</option>
+              <option value="Gestasional">Gestasional</option>
+              <option value="Pra-diabetes">Pra-diabetes</option>
+            </select>
+          </label>
+          <label>
+            <span>Tingkat Nyeri (1-10)</span>
+            <input type="range" id="painLevel" min="1" max="10" value="2">
+            <small id="painValue">2</small>
+          </label>
+          <label>
+            <span>Suhu Kaki (°C)</span>
+            <input type="number" id="footTemp" min="20" max="50" step="0.1" placeholder="36.5" required>
+          </label>
+          <label>
+            <span>Kondisi Kulit</span>
+            <select id="skinCondition" required>
+              <option value="normal">Normal</option>
+              <option value="kering">Kering</option>
+              <option value="kemerahan">Kemerahan</option>
+              <option value="pecah-pecah">Pecah-pecah</option>
+            </select>
+          </label>
+          <label>
+            <span>Sensitivitas Saraf</span>
+            <select id="nerveSensitivity" required>
+              <option value="baik">Baik</option>
+              <option value="menurun">Menurun</option>
+              <option value="sangat menurun">Sangat menurun</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="checkbox-group">
+          <p>Gejala yang terdeteksi</p>
+          <label><input type="checkbox" value="Luka terbuka"> Luka terbuka</label>
+          <label><input type="checkbox" value="Bengkak"> Bengkak</label>
+          <label><input type="checkbox" value="Kebas"> Kebas</label>
+          <label><input type="checkbox" value="Masalah kuku"> Masalah kuku</label>
+          <label><input type="checkbox" value="Nyeri hebat"> Nyeri hebat</label>
+        </div>
+
+        <button type="submit" class="primary-btn">Cek Status</button>
+      </form>
+
+      <section id="assessmentResult" class="result-card hidden"></section>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="guideModal">
+    <div class="modal-card">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 4</p>
+        <h2>Pemeriksaan Kaki Harian</h2>
+      </div>
+      <form id="dailyChecklistForm" class="modal-form">
+        <div class="check-list">
+          <label><input type="checkbox" id="hasWound"> Apakah ada luka?</label>
+          <label><input type="checkbox" id="feelsNumb"> Apakah kaki terasa kebas?</label>
+          <label><input type="checkbox" id="nailIssue"> Apakah kuku bermasalah?</label>
+        </div>
+        <label>
+          <span>Unggah Foto/Dokumen</span>
+          <input type="file" id="dailyUpload" accept=".jpg,.jpeg,.png">
+          <small>Format JPG/PNG, maksimal 5MB</small>
+        </label>
+        <button type="submit" class="primary-btn">Simpan Pemeriksaan Harian</button>
+      </form>
+      <div id="dailyChecklistMessage" class="message-box inline" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="reminderModal">
+    <div class="modal-card">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 5</p>
+        <h2>Jadwal & Pengingat</h2>
+      </div>
+      <div class="info-stack">
+        <article class="info-card">
+          <h3>Jadwal Pemeriksaan Rutin</h3>
+          <ul>
+            <li>Pemeriksaan kaki harian</li>
+            <li>Perawatan kaki mingguan</li>
+            <li>Konsultasi dokter rutin</li>
+            <li>Pemeriksaan khusus saat darurat</li>
+          </ul>
+        </article>
+        <article class="info-card">
+          <h3>Jadwal Minum Obat</h3>
+          <ul>
+            <li>Pagi (06:00-08:00)</li>
+            <li>Siang (12:00-13:00)</li>
+            <li>Malam (19:00-20:00)</li>
+          </ul>
+        </article>
+        <article class="info-card">
+          <h3>Tips Penting</h3>
+          <ul>
+            <li>Gunakan alarm pengingat</li>
+            <li>Catat konsumsi obat</li>
+            <li>Periksa kaki sebelum tidur</li>
+            <li>Segera hubungi dokter jika ada perubahan</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="educationModal">
+    <div class="modal-card">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 6</p>
+        <h2>Edukasi Kesehatan</h2>
+      </div>
+      <div class="tab-pills">
+        <button class="pill active" data-edu-tab="prevention">Pencegahan</button>
+        <button class="pill" data-edu-tab="wound">Perawatan Luka</button>
+        <button class="pill" data-edu-tab="ointment">Penggunaan Salep</button>
+      </div>
+      <div class="education-panel active" data-edu-panel="prevention">
+        <p>Mencegah lebih baik daripada mengobati. Perawatan kaki yang tepat membantu menurunkan risiko ulkus kaki diabetes.</p>
+        <ul>
+          <li>Kontrol gula darah secara rutin</li>
+          <li>Lakukan perawatan kulit harian</li>
+          <li>Pilih alas kaki yang nyaman</li>
+          <li>Rawat kuku dengan benar</li>
+          <li>Hindari cedera dan gesekan</li>
+          <li>Jalani gaya hidup sehat</li>
+        </ul>
+      </div>
+      <div class="education-panel" data-edu-panel="wound">
+        <p>Bersihkan luka dengan lembut, keringkan area sekitar, dan gunakan balutan bersih agar tidak terjadi infeksi lanjutan.</p>
+      </div>
+      <div class="education-panel" data-edu-panel="ointment">
+        <p>Gunakan salep sesuai anjuran tenaga medis. Hindari pemakaian obat topikal tanpa konsultasi jika ada luka terbuka atau infeksi berat.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="notesModal">
+    <div class="modal-card">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 7</p>
+        <h2>Catatan Luka</h2>
+      </div>
+      <form id="notesForm" class="modal-form">
+        <label>
+          <span>Lokasi Luka</span>
+          <select id="woundLocation" required>
+            <option value="Telapak kaki">Telapak kaki</option>
+            <option value="Sela jari">Sela jari</option>
+            <option value="Tumit">Tumit</option>
+            <option value="Punggung kaki">Punggung kaki</option>
+            <option value="Sekitar kuku">Sekitar kuku</option>
+          </select>
+        </label>
+        <label>
+          <span>Keterangan</span>
+          <textarea id="woundDescription" rows="5" placeholder="Ukuran, warna, tingkat nyeri, dan perubahan kondisi" required></textarea>
+        </label>
+        <button type="submit" class="primary-btn">Simpan Catatan</button>
+      </form>
+      <div id="notesMessage" class="message-box inline" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="historyModal">
+    <div class="modal-card wide">
+      <button class="close-btn" data-close-modal>&times;</button>
+      <div class="modal-header">
+        <p class="eyebrow">Tahap 8</p>
+        <h2>Riwayat Pemeriksaan dan Status Harian</h2>
+      </div>
+      <section class="history-status">
+        <div class="status-alert" id="todayStatusCard">
+          <strong id="todayStatusLabel">Belum ada data hari ini</strong>
+          <p id="todayStatusMessage">Silakan lakukan pemeriksaan untuk melihat status terkini.</p>
+        </div>
+      </section>
+      <section>
+        <h3>Riwayat Pemeriksaan</h3>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Daftarkan Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => console.log("[SW] Terdaftar:", reg.scope))
+          .catch((err) => console.error("[SW] Gagal daftar:", err));
+      });
+    }
+  </script>
+</body>
+</html>

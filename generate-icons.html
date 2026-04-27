@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate NEUROSTEP Icons</title>
+  <style>
+    body { font-family: sans-serif; padding: 32px; background: #eef6ff; }
+    h2 { color: #1677d8; }
+    .grid { display: flex; flex-wrap: wrap; gap: 16px; margin: 24px 0; }
+    .item { text-align: center; font-size: 12px; color: #5a7691; }
+    button {
+      padding: 14px 28px; background: #1677d8; color: white;
+      border: 0; border-radius: 12px; font-size: 1rem;
+      font-weight: 700; cursor: pointer; margin-top: 16px;
+    }
+    button:hover { background: #0e4f9e; }
+    p { color: #5a7691; }
+  </style>
+</head>
+<body>
+  <h2>NEUROSTEP — Icon Generator</h2>
+  <p>Klik tombol di bawah untuk generate dan download semua icon PWA sekaligus.</p>
+  <div class="grid" id="preview"></div>
+  <button onclick="downloadAll()">⬇ Download Semua Icon</button>
+  <p id="status"></p>
+
+  <script>
+    const SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+
+    function drawIcon(size) {
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      const r = size * 0.18; // border radius
+
+      // Background rounded rect
+      ctx.beginPath();
+      ctx.moveTo(r, 0);
+      ctx.lineTo(size - r, 0);
+      ctx.quadraticCurveTo(size, 0, size, r);
+      ctx.lineTo(size, size - r);
+      ctx.quadraticCurveTo(size, size, size - r, size);
+      ctx.lineTo(r, size);
+      ctx.quadraticCurveTo(0, size, 0, size - r);
+      ctx.lineTo(0, r);
+      ctx.quadraticCurveTo(0, 0, r, 0);
+      ctx.closePath();
+
+      // Gradient background
+      const grad = ctx.createLinearGradient(0, 0, size, size);
+      grad.addColorStop(0, "#1677d8");
+      grad.addColorStop(1, "#0e4f9e");
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Subtle circle decoration (bottom-right)
+      ctx.beginPath();
+      ctx.arc(size * 0.85, size * 0.85, size * 0.32, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(97, 183, 255, 0.18)";
+      ctx.fill();
+
+      // Text "NS"
+      const fontSize = Math.round(size * 0.38);
+      ctx.font = `800 ${fontSize}px 'Plus Jakarta Sans', Arial, sans-serif`;
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("NS", size / 2, size / 2);
+
+      return canvas;
+    }
+
+    // Preview semua ukuran
+    const preview = document.getElementById("preview");
+    SIZES.forEach((size) => {
+      const canvas = drawIcon(size);
+      canvas.style.width = "64px";
+      canvas.style.height = "64px";
+      canvas.style.borderRadius = "12px";
+      const wrap = document.createElement("div");
+      wrap.className = "item";
+      wrap.appendChild(canvas);
+      wrap.appendChild(document.createElement("br"));
+      wrap.appendChild(document.createTextNode(`${size}×${size}`));
+      preview.appendChild(wrap);
+    });
+
+    function sleep(ms) {
+      return new Promise((res) => setTimeout(res, ms));
+    }
+
+    async function downloadAll() {
+      const status = document.getElementById("status");
+      status.textContent = "Sedang mengunduh...";
+
+      for (const size of SIZES) {
+        const canvas = drawIcon(size);
+        const link = document.createElement("a");
+        link.download = `icon-${size}x${size}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        await sleep(300); // jeda antar download agar browser tidak blokir
+      }
+
+      status.textContent = `✅ Selesai! ${SIZES.length} icon diunduh. Pindahkan semua file ke folder icons/ di project kamu.`;
+    }
+  </script>
+</body>
+</html>
